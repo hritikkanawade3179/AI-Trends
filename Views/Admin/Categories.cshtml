@@ -1,0 +1,72 @@
+@model List<AITrendsNews.Models.Category>
+@{ ViewData["Title"] = "Categories"; Layout = "~/Views/Shared/_AdminLayout.cshtml"; }
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-0">
+                <table class="table table-hover align-middle mb-0 small">
+                    <thead class="table-light text-muted">
+                        <tr><th class="ps-3">Name</th><th>Slug</th><th>Posts</th><th>Color</th><th class="pe-3 text-end">Actions</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var cat in Model)
+                        {
+                            <tr>
+                                <td class="ps-3 fw-semibold"><i class="@cat.IconClass me-2" style="color:@cat.ColorHex"></i>@cat.Name</td>
+                                <td class="text-muted">@cat.Slug</td>
+                                <td>@cat.Posts.Count</td>
+                                <td><span class="badge" style="background:@cat.ColorHex">@cat.ColorHex</span></td>
+                                <td class="pe-3 text-end">
+                                    <button class="btn btn-sm btn-outline-primary"
+                                            onclick="fillForm(@cat.Id, '@cat.Name', '@cat.Description', '@cat.IconClass', '@cat.ColorHex', @cat.SortOrder)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent fw-semibold pt-3">Add / Edit Category</div>
+            <div class="card-body">
+                <form asp-action="SaveCategory" method="post">
+                    <input type="hidden" id="catId" name="Id" value="0" />
+                    <div class="mb-3"><label class="form-label small fw-semibold">Name *</label>
+                        <input id="catName" name="Name" class="form-control" required /></div>
+                    <div class="mb-3"><label class="form-label small fw-semibold">Description</label>
+                        <input id="catDesc" name="Description" class="form-control" /></div>
+                    <div class="mb-3"><label class="form-label small fw-semibold">Bootstrap Icon Class</label>
+                        <input id="catIcon" name="IconClass" class="form-control" placeholder="bi bi-cpu" /></div>
+                    <div class="mb-3"><label class="form-label small fw-semibold">Color (hex)</label>
+                        <input id="catColor" name="ColorHex" class="form-control" type="color" value="#534AB7" /></div>
+                    <div class="mb-3"><label class="form-label small fw-semibold">Sort Order</label>
+                        <input id="catSort" name="SortOrder" class="form-control" type="number" value="0" /></div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary flex-grow-1"><i class="bi bi-check-lg me-1"></i>Save</button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="clearForm()">Clear</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+<script>
+function fillForm(id, name, desc, icon, color, sort) {
+    document.getElementById('catId').value = id;
+    document.getElementById('catName').value = name;
+    document.getElementById('catDesc').value = desc || '';
+    document.getElementById('catIcon').value = icon || '';
+    document.getElementById('catColor').value = color || '#534AB7';
+    document.getElementById('catSort').value = sort;
+}
+function clearForm() {
+    ['catId','catName','catDesc','catIcon','catSort'].forEach(id => document.getElementById(id).value = id === 'catId' ? '0' : id === 'catSort' ? '0' : '');
+    document.getElementById('catColor').value = '#534AB7';
+}
+</script>
+}

@@ -1,0 +1,169 @@
+@model AITrendsNews.ViewModels.HomeViewModel
+@{ ViewData["Title"] = "Home"; Layout = "~/Views/Shared/_Layout.cshtml"; }
+
+<!-- Hero -->
+<section class="hero-section bg-dark text-white py-5">
+    <div class="container-xl py-3">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <span class="badge bg-primary mb-3 px-3 py-2 fs-6">
+                    <i class="bi bi-lightning-fill me-1"></i>Latest in AI
+                </span>
+                <h1 class="display-4 fw-bold mb-3">
+                    Stay Ahead of the <span class="text-primary">AI Revolution</span>
+                </h1>
+                <p class="lead text-secondary mb-4">
+                    Curated AI news, research papers, tools, videos and events for developers and engineers. Updated daily.
+                </p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a asp-controller="News" asp-action="Index" class="btn btn-primary btn-lg px-4">
+                        <i class="bi bi-newspaper me-2"></i>Browse All Updates
+                    </a>
+                    <a href="#featured" class="btn btn-outline-light btn-lg px-4">
+                        <i class="bi bi-star me-2"></i>Featured Posts
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="row g-3">
+                    @foreach (var cat in Model.Categories.Take(6))
+                    {
+                        <div class="col-6">
+                            <a asp-controller="News" asp-action="Index" asp-route-categoryId="@cat.Id"
+                               class="category-card text-decoration-none d-block p-3 rounded-3 border border-secondary text-white"
+                               style="background: rgba(255,255,255,0.05); transition:.2s">
+                                <i class="@cat.IconClass fs-4 mb-2 d-block" style="color:@cat.ColorHex"></i>
+                                <span class="small fw-semibold">@cat.Name</span>
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Posts -->
+@if (Model.FeaturedPosts.Any())
+{
+    <section id="featured" class="py-5 bg-white">
+        <div class="container-xl">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold mb-0"><i class="bi bi-star-fill text-warning me-2"></i>Featured</h2>
+                <a asp-controller="News" asp-action="Index" class="btn btn-outline-primary btn-sm">View all</a>
+            </div>
+            <div class="row g-4">
+                @for (int i = 0; i < Model.FeaturedPosts.Count; i++)
+                {
+                    var post = Model.FeaturedPosts[i];
+                    <div class="col-md-@(i == 0 ? "7" : "5") @(i > 1 ? "col-md-6" : "")">
+                        <div class="card h-100 border-0 shadow-sm post-card">
+                            @if (!string.IsNullOrEmpty(post.ThumbnailUrl))
+                            {
+                                <img src="@post.ThumbnailUrl" class="card-img-top" style="height:220px;object-fit:cover" alt="@post.Title" />
+                            }
+                            else
+                            {
+                                <div class="card-img-top d-flex align-items-center justify-content-center text-white"
+                                     style="height:160px;background:@(post.Category?.ColorHex ?? "#534AB7")">
+                                    <i class="@(post.Category?.IconClass ?? "bi bi-newspaper") display-4"></i>
+                                </div>
+                            }
+                            <div class="card-body">
+                                <div class="d-flex gap-2 mb-2 flex-wrap">
+                                    <span class="badge" style="background:@(post.Category?.ColorHex ?? "#534AB7")">@post.Category?.Name</span>
+                                    <span class="badge bg-light text-dark">@post.Type</span>
+                                </div>
+                                <h5 class="card-title fw-bold">
+                                    <a asp-controller="News" asp-action="Detail" asp-route-slug="@post.Slug"
+                                       class="text-decoration-none text-dark stretched-link">@post.Title</a>
+                                </h5>
+                                <p class="card-text text-muted small">@post.Summary</p>
+                            </div>
+                            <div class="card-footer bg-transparent border-0 d-flex justify-content-between text-muted small">
+                                <span><i class="bi bi-clock me-1"></i>@post.PublishedAt?.ToString("MMM dd, yyyy")</span>
+                                <span><i class="bi bi-eye me-1"></i>@post.ViewCount views</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+<!-- Trending & Latest side by side -->
+<section class="py-5 bg-light">
+    <div class="container-xl">
+        <div class="row g-5">
+            <!-- Latest -->
+            <div class="col-lg-8">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold mb-0"><i class="bi bi-clock-history text-primary me-2"></i>Latest Updates</h2>
+                    <a asp-controller="News" asp-action="Index" class="btn btn-outline-primary btn-sm">View all</a>
+                </div>
+                <div class="row g-3">
+                    @foreach (var post in Model.LatestPosts)
+                    {
+                        <div class="col-md-6">
+                            <div class="card h-100 border-0 shadow-sm post-card">
+                                <div class="card-body">
+                                    <div class="d-flex gap-2 mb-2">
+                                        <span class="badge" style="background:@(post.Category?.ColorHex ?? "#534AB7"); font-size:10px">@post.Category?.Name</span>
+                                        <span class="badge bg-light text-dark" style="font-size:10px">@post.Type</span>
+                                    </div>
+                                    <h6 class="card-title fw-semibold">
+                                        <a asp-controller="News" asp-action="Detail" asp-route-slug="@post.Slug"
+                                           class="text-decoration-none text-dark stretched-link">@post.Title</a>
+                                    </h6>
+                                    <p class="card-text text-muted small mb-0 line-clamp-2">@post.Summary</p>
+                                </div>
+                                <div class="card-footer bg-transparent border-0 text-muted small d-flex justify-content-between">
+                                    <span>@post.PublishedAt?.ToString("MMM dd")</span>
+                                    <span><i class="bi bi-eye me-1"></i>@post.ViewCount</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Trending Sidebar -->
+            <div class="col-lg-4">
+                <h2 class="fw-bold mb-4"><i class="bi bi-graph-up-arrow text-danger me-2"></i>Trending</h2>
+                <div class="d-flex flex-column gap-3">
+                    @for (int i = 0; i < Model.TrendingPosts.Count; i++)
+                    {
+                        var post = Model.TrendingPosts[i];
+                        <div class="d-flex gap-3 align-items-start bg-white rounded-3 p-3 shadow-sm">
+                            <span class="fw-bold text-primary fs-4 lh-1" style="min-width:28px">@(i + 1)</span>
+                            <div>
+                                <a asp-controller="News" asp-action="Detail" asp-route-slug="@post.Slug"
+                                   class="text-decoration-none text-dark fw-semibold small">@post.Title</a>
+                                <p class="text-muted mb-0 mt-1" style="font-size:11px">
+                                    <span class="badge" style="background:@(post.Category?.ColorHex ?? "#534AB7");font-size:9px">@post.Category?.Name</span>
+                                    <span class="ms-2"><i class="bi bi-eye me-1"></i>@post.ViewCount</span>
+                                </p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter CTA -->
+<section class="py-5 bg-primary text-white">
+    <div class="container-xl text-center py-3">
+        <h2 class="fw-bold mb-2">Never miss an AI update</h2>
+        <p class="lead mb-4 opacity-75">Join thousands of developers getting the latest AI news in their inbox.</p>
+        <form asp-controller="Home" asp-action="Subscribe" method="post" class="d-flex gap-2 justify-content-center flex-wrap">
+            <input type="email" name="email" class="form-control w-auto" style="min-width:280px"
+                   placeholder="your@email.com" required />
+            <button class="btn btn-dark btn-lg px-4">
+                <i class="bi bi-envelope-check me-2"></i>Subscribe Free
+            </button>
+        </form>
+    </div>
+</section>

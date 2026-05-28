@@ -1,0 +1,33 @@
+{
+  "Files": [
+    {
+      "Id": "D:\\AI\\AITrendsNews\\AITrendsNews\\wwwroot\\css\\admin.css",
+      "PackagePath": "staticwebassets\\css\\admin.css"
+    },
+    {
+      "Id": "D:\\AI\\AITrendsNews\\AITrendsNews\\wwwroot\\css\\site.css",
+      "PackagePath": "staticwebassets\\css\\site.css"
+    },
+    {
+      "Id": "D:\\AI\\AITrendsNews\\AITrendsNews\\wwwroot\\js\\site.js",
+      "PackagePath": "staticwebassets\\js\\site.js"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.AITrendsNews.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.AITrendsNews.props",
+      "PackagePath": "build\\AITrendsNews.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.AITrendsNews.props",
+      "PackagePath": "buildMultiTargeting\\AITrendsNews.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.AITrendsNews.props",
+      "PackagePath": "buildTransitive\\AITrendsNews.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

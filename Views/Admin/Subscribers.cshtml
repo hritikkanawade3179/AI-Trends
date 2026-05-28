@@ -1,0 +1,27 @@
+@model List<AITrendsNews.Models.NewsletterSubscriber>
+@{ ViewData["Title"] = "Newsletter Subscribers"; Layout = "~/Views/Shared/_AdminLayout.cshtml"; }
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-transparent d-flex justify-content-between align-items-center pt-3">
+        <span class="fw-semibold"><i class="bi bi-envelope me-2 text-primary"></i>@Model.Count total subscribers</span>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover align-middle mb-0 small">
+            <thead class="table-light text-muted">
+                <tr><th class="ps-3">Email</th><th>Status</th><th class="pe-3">Subscribed</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var sub in Model)
+                {
+                    <tr>
+                        <td class="ps-3 fw-semibold">@sub.Email</td>
+                        <td>
+                            @if (sub.IsActive) { <span class="badge bg-success-subtle text-success border border-success-subtle">Active</span> }
+                            else { <span class="badge bg-secondary-subtle text-secondary border">Inactive</span> }
+                        </td>
+                        <td class="pe-3 text-muted">@sub.SubscribedAt.ToString("MMM dd, yyyy HH:mm")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

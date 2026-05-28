@@ -1,0 +1,29 @@
+@model List<AITrendsNews.Models.ApplicationUser>
+@{ ViewData["Title"] = "Users"; Layout = "~/Views/Shared/_AdminLayout.cshtml"; }
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <table class="table table-hover align-middle mb-0 small">
+            <thead class="table-light text-muted">
+                <tr><th class="ps-3">Name</th><th>Email</th><th>Joined</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td class="ps-3 fw-semibold">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center text-white"
+                                     style="width:32px;height:32px;font-size:12px;flex-shrink:0">
+                                    @(user.FullName.Length > 0 ? user.FullName[0].ToString().ToUpper() : "U")
+                                </div>
+                                @user.FullName
+                            </div>
+                        </td>
+                        <td>@user.Email</td>
+                        <td class="text-muted">@user.CreatedAt.ToString("MMM dd, yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

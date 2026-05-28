@@ -1,0 +1,105 @@
+@model List<AITrendsNews.Models.Post>
+@{ ViewData["Title"] = "Manage Posts"; Layout = "~/Views/Shared/_AdminLayout.cshtml"; }
+
+<div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-5">
+                <input type="text" name="search" value="@ViewBag.Search" class="form-control form-control-sm" placeholder="Search posts..." />
+            </div>
+            <div class="col-md-3">
+                <select name="status" class="form-select form-select-sm">
+                    <option value="">All Statuses</option>
+                    @foreach (var s in Enum.GetValues<AITrendsNews.Models.PostStatus>())
+                    { <option value="@s" selected="@(ViewBag.Status?.ToString() == s.ToString())">@s</option> }
+                </select>
+            </div>
+            <div class="col-auto d-flex gap-2">
+                <button class="btn btn-primary btn-sm"><i class="bi bi-search me-1"></i>Search</button>
+                <a asp-action="Posts" class="btn btn-outline-secondary btn-sm">Clear</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light small text-muted">
+                    <tr>
+                        <th class="ps-3">Title</th>
+                        <th>Type</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>Views</th>
+                        <th>Author</th>
+                        <th>Date</th>
+                        <th class="pe-3 text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="small">
+                    @foreach (var post in Model)
+                    {
+                        <tr>
+                            <td class="ps-3">
+                                <div style="max-width:220px">
+                                    <span class="fw-semibold d-block text-truncate">@post.Title</span>
+                                    @if (post.IsFeatured) { <span class="badge bg-warning text-dark me-1" style="font-size:9px">Featured</span> }
+                                    @if (post.IsTrending) { <span class="badge bg-danger" style="font-size:9px">Trending</span> }
+                                </div>
+                            </td>
+                            <td><span class="badge bg-light text-dark border" style="font-size:10px">@post.Type</span></td>
+                            <td><span class="badge" style="background:@(post.Category?.ColorHex ?? "#534AB7");font-size:10px">@post.Category?.Name</span></td>
+                            <td>
+                                @if (post.Status == AITrendsNews.Models.PostStatus.Published)
+                                { <span class="badge bg-success-subtle text-success border border-success-subtle">Published</span> }
+                                else if (post.Status == AITrendsNews.Models.PostStatus.Draft)
+                                { <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Draft</span> }
+                                else { <span class="badge bg-secondary-subtle text-secondary border">Archived</span> }
+                            </td>
+                            <td>@post.ViewCount</td>
+                            <td class="text-muted">@post.Author?.FullName</td>
+                            <td class="text-muted">@post.CreatedAt.ToString("MMM dd, yyyy")</td>
+                            <td class="pe-3 text-end">
+                                <div class="d-flex gap-1 justify-content-end">
+                                    <a asp-action="EditPost" asp-route-id="@post.Id" class="btn btn-sm btn-outline-primary" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a asp-controller="News" asp-action="Detail" asp-route-slug="@post.Slug"
+                                       target="_blank" class="btn btn-sm btn-outline-secondary" title="View">
+                                        <i class="bi bi-box-arrow-up-right"></i>
+                                    </a>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <form asp-action="DeletePost" asp-route-id="@post.Id" method="post" class="d-inline"
+                                              onsubmit="return confirm('Delete this post?')">
+                                            <button class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                                        </form>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer bg-transparent text-muted small d-flex justify-content-between">
+        <span>Showing @Model.Count of @ViewBag.Total posts</span>
+        @{ int total = ViewBag.Total; int pageSize = 15; int pages = (int)Math.Ceiling((double)total / pageSize); int page = ViewBag.Page; }
+        @if (pages > 1)
+        {
+            <nav>
+                <ul class="pagination pagination-sm mb-0">
+                    @for (int p = 1; p <= pages; p++)
+                    {
+                        <li class="page-item @(p == page ? "active" : "")">
+                            <a class="page-link" asp-action="Posts" asp-route-page="@p" asp-route-search="@ViewBag.Search">@p</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
+    </div>
+</div>

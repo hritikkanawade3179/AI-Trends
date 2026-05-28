@@ -1,0 +1,164 @@
+@model AITrendsNews.ViewModels.DashboardStats
+@{ ViewData["Title"] = "Dashboard"; Layout = "~/Views/Shared/_AdminLayout.cshtml"; }
+
+<!-- Stat Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted small mb-1">Total Posts</p>
+                        <h3 class="fw-bold mb-0">@Model.TotalPosts</h3>
+                        <small class="text-muted">@Model.PostsThisMonth new this month</small>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 rounded-3 p-2">
+                        <i class="bi bi-file-earmark-text fs-4 text-primary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted small mb-1">Published</p>
+                        <h3 class="fw-bold mb-0 text-success">@Model.PublishedPosts</h3>
+                        <small class="text-muted">@Model.DraftPosts drafts pending</small>
+                    </div>
+                    <div class="bg-success bg-opacity-10 rounded-3 p-2">
+                        <i class="bi bi-check-circle fs-4 text-success"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted small mb-1">Total Views</p>
+                        <h3 class="fw-bold mb-0 text-info">@Model.TotalViews.ToString("N0")</h3>
+                        <small class="text-muted">Across all posts</small>
+                    </div>
+                    <div class="bg-info bg-opacity-10 rounded-3 p-2">
+                        <i class="bi bi-eye fs-4 text-info"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted small mb-1">Subscribers</p>
+                        <h3 class="fw-bold mb-0 text-warning">@Model.TotalSubscribers</h3>
+                        <small class="text-muted">Newsletter subscribers</small>
+                    </div>
+                    <div class="bg-warning bg-opacity-10 rounded-3 p-2">
+                        <i class="bi bi-envelope-check fs-4 text-warning"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Chart -->
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-transparent border-0 fw-semibold pt-3">
+                <i class="bi bi-pie-chart me-2 text-primary"></i>Posts by Type
+            </div>
+            <div class="card-body d-flex align-items-center justify-content-center">
+                <canvas id="typeChart" style="max-height:260px"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Posts Table -->
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center pt-3">
+                <span class="fw-semibold"><i class="bi bi-clock-history me-2 text-primary"></i>Recent Posts</span>
+                <a asp-action="Posts" class="btn btn-sm btn-outline-primary">View all</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light small text-muted">
+                            <tr>
+                                <th class="ps-3">Title</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Views</th>
+                                <th class="pe-3">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody class="small">
+                            @foreach (var post in Model.RecentPosts)
+                            {
+                                <tr>
+                                    <td class="ps-3">
+                                        <span class="fw-semibold d-block" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">@post.Title</span>
+                                        <span class="badge bg-light text-dark border" style="font-size:10px">@post.Type</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge" style="background:@(post.Category?.ColorHex ?? "#534AB7");font-size:10px">@post.Category?.Name</span>
+                                    </td>
+                                    <td>
+                                        @if (post.Status == AITrendsNews.Models.PostStatus.Published)
+                                        { <span class="badge bg-success-subtle text-success border border-success-subtle">Published</span> }
+                                        else if (post.Status == AITrendsNews.Models.PostStatus.Draft)
+                                        { <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Draft</span> }
+                                        else
+                                        { <span class="badge bg-secondary-subtle text-secondary border">Archived</span> }
+                                    </td>
+                                    <td>@post.ViewCount</td>
+                                    <td class="pe-3 text-muted">@post.CreatedAt.ToString("MMM dd")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick actions -->
+<div class="row g-3 mt-2">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body d-flex gap-3 flex-wrap align-items-center">
+                <span class="fw-semibold text-muted small">Quick actions:</span>
+                <a asp-action="CreatePost" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i>New Post</a>
+                <a asp-action="Categories" class="btn btn-outline-secondary btn-sm"><i class="bi bi-folder me-1"></i>Manage Categories</a>
+                <a asp-action="Tags" class="btn btn-outline-secondary btn-sm"><i class="bi bi-tags me-1"></i>Manage Tags</a>
+                <a asp-action="Subscribers" class="btn btn-outline-secondary btn-sm"><i class="bi bi-envelope me-1"></i>View Subscribers</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+const ctx = document.getElementById('typeChart');
+const labels = [@Html.Raw(string.Join(",", Model.PostsByType.Select(p => $"'{p.Type}'")))];
+const data   = [@Html.Raw(string.Join(",", Model.PostsByType.Select(p => p.Count)))];
+new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: labels,
+        datasets: [{ data: data, backgroundColor: ['#534AB7','#0F6E56','#185FA5','#854F0B','#993C1D','#3B6D11'], borderWidth: 2 }]
+    },
+    options: { plugins: { legend: { position: 'bottom' } }, cutout: '65%' }
+});
+</script>
+}

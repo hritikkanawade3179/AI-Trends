@@ -1,0 +1,31 @@
+@model List<AITrendsNews.Models.Tag>
+@{ ViewData["Title"] = "Tags"; Layout = "~/Views/Shared/_AdminLayout.cshtml"; }
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex flex-wrap gap-2">
+                    @foreach (var tag in Model)
+                    {
+                        <span class="badge bg-light text-dark border px-3 py-2 d-flex align-items-center gap-2">
+                            @tag.Name <small class="text-muted">(@tag.PostTags.Count)</small>
+                        </span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent fw-semibold pt-3">Add Tag</div>
+            <div class="card-body">
+                <form asp-action="SaveTag" method="post">
+                    <input type="hidden" name="Id" value="0" />
+                    <div class="mb-3"><label class="form-label small fw-semibold">Tag Name *</label>
+                        <input name="Name" class="form-control" required placeholder="e.g. GPT-4" /></div>
+                    <button class="btn btn-primary w-100"><i class="bi bi-plus-lg me-1"></i>Add Tag</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

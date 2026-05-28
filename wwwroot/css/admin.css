@@ -1,0 +1,31 @@
+/* Admin Panel Styles */
+body.admin-body { background: #f8f9fa; font-size: 14px; }
+
+.admin-sidebar {
+    background: #1a1a2e;
+    color: #adb5bd;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.sidebar-link {
+    color: #9ca3af !important;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    transition: all .15s;
+}
+.sidebar-link:hover { background: rgba(255,255,255,0.08); color: #fff !important; }
+.sidebar-link.active { background: rgba(83,74,183,0.25); color: #a5b4fc !important; font-weight: 500; }
+
+.admin-topbar { min-height: 54px; }
+
+/* Cards */
+.card { border-radius: 12px !important; }
+.table th { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; font-weight: 600; }
+
+/* Form controls */
+.form-control:focus, .form-select:focus { border-color: #534AB7; box-shadow: 0 0 0 3px rgba(83,74,183,.15); }

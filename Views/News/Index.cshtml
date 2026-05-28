@@ -1,0 +1,157 @@
+@model AITrendsNews.ViewModels.NewsListViewModel
+@{ ViewData["Title"] = "News & Updates"; Layout = "~/Views/Shared/_Layout.cshtml"; }
+
+<div class="bg-dark text-white py-4">
+    <div class="container-xl">
+        <h1 class="fw-bold mb-1"><i class="bi bi-newspaper me-2 text-primary"></i>AI News & Updates</h1>
+        <p class="text-secondary mb-0">Articles, research, tools, videos and events — all in one place.</p>
+    </div>
+</div>
+
+<div class="container-xl py-4">
+    <!-- Filters -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label small fw-semibold">Search</label>
+                    <input type="text" name="search" value="@Model.Search" class="form-control" placeholder="Search titles..." />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold">Type</label>
+                    <select name="type" class="form-select">
+                        <option value="">All Types</option>
+                        @foreach (var t in Enum.GetValues<AITrendsNews.Models.PostType>())
+                        {
+                            <option value="@t" selected="@(Model.SelectedType == t)">@t</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold">Category</label>
+                    <select name="categoryId" class="form-select">
+                        <option value="">All Categories</option>
+                        @foreach (var cat in Model.Categories)
+                        {
+                            <option value="@cat.Id" selected="@(Model.SelectedCategory == cat.Id)">@cat.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex gap-2">
+                    <button class="btn btn-primary flex-grow-1"><i class="bi bi-search me-1"></i>Filter</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">Clear</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Posts Grid -->
+        <div class="col-lg-8">
+            @if (Model.Posts.Items.Any())
+            {
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-muted small">@Model.Posts.TotalCount result(s)</span>
+                </div>
+                <div class="row g-3">
+                    @foreach (var post in Model.Posts.Items)
+                    {
+                        <div class="col-md-6">
+                            <div class="card h-100 border-0 shadow-sm post-card">
+                                @if (!string.IsNullOrEmpty(post.ThumbnailUrl))
+                                {
+                                    <img src="@post.ThumbnailUrl" class="card-img-top" style="height:160px;object-fit:cover" alt="@post.Title" />
+                                }
+                                else
+                                {
+                                    <div class="d-flex align-items-center justify-content-center text-white card-img-top"
+                                         style="height:100px;background:@(post.Category?.ColorHex ?? "#534AB7")">
+                                        <i class="@(post.Category?.IconClass ?? "bi bi-newspaper") fs-2"></i>
+                                    </div>
+                                }
+                                <div class="card-body pb-2">
+                                    <div class="d-flex gap-1 mb-2 flex-wrap">
+                                        <span class="badge" style="background:@(post.Category?.ColorHex ?? "#534AB7");font-size:10px">@post.Category?.Name</span>
+                                        <span class="badge bg-light text-dark" style="font-size:10px">@post.Type</span>
+                                        @if (post.IsTrending) { <span class="badge bg-danger" style="font-size:10px"><i class="bi bi-graph-up-arrow"></i></span> }
+                                    </div>
+                                    <h6 class="card-title fw-semibold lh-sm">
+                                        <a asp-controller="News" asp-action="Detail" asp-route-slug="@post.Slug"
+                                           class="text-decoration-none text-dark stretched-link">@post.Title</a>
+                                    </h6>
+                                    <p class="card-text text-muted small line-clamp-2 mb-0">@post.Summary</p>
+                                </div>
+                                <div class="card-footer bg-transparent border-0 d-flex justify-content-between text-muted small">
+                                    <span>@post.PublishedAt?.ToString("MMM dd, yyyy")</span>
+                                    <span><i class="bi bi-eye me-1"></i>@post.ViewCount</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Pagination -->
+                @if (Model.Posts.TotalPages > 1)
+                {
+                    <nav class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            @for (int p = 1; p <= Model.Posts.TotalPages; p++)
+                            {
+                                <li class="page-item @(p == Model.Posts.Page ? "active" : "")">
+                                    <a class="page-link"
+                                       asp-action="Index"
+                                       asp-route-page="@p"
+                                       asp-route-search="@Model.Search"
+                                       asp-route-type="@Model.SelectedType"
+                                       asp-route-categoryId="@Model.SelectedCategory"
+                                       asp-route-tag="@Model.Tag">@p</a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                }
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-search display-1 text-muted"></i>
+                    <h4 class="mt-3 text-muted">No results found</h4>
+                    <a asp-action="Index" class="btn btn-primary mt-2">Clear filters</a>
+                </div>
+            }
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3"><i class="bi bi-folder me-2 text-primary"></i>Categories</h6>
+                    @foreach (var cat in Model.Categories)
+                    {
+                        <a asp-action="Index" asp-route-categoryId="@cat.Id"
+                           class="d-flex align-items-center justify-content-between text-decoration-none text-dark py-2 border-bottom">
+                            <span class="small"><i class="@cat.IconClass me-2" style="color:@cat.ColorHex"></i>@cat.Name</span>
+                            <i class="bi bi-chevron-right text-muted small"></i>
+                        </a>
+                    }
+                </div>
+            </div>
+
+            @if (Model.PopularTags.Any())
+            {
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3"><i class="bi bi-tags me-2 text-primary"></i>Popular Tags</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            @foreach (var tag in Model.PopularTags)
+                            {
+                                <a asp-action="Index" asp-route-tag="@tag.Slug"
+                                   class="badge bg-light text-dark text-decoration-none px-2 py-1 border">@tag.Name</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
