@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AITrendsNews.Controllers
 {
+    //hellow controller
     public class AccountController : Controller
     {
         private readonly SignInManager<ApplicationUser> _signIn;
